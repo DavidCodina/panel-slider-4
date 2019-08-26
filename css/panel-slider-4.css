@@ -1,0 +1,395 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:900&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  background-color: floralWhite;
+}
+
+main {
+  min-height: 100vh;
+}
+
+.fancy-h1 {
+  margin: 0;
+  padding: 50px 0;
+  color: snow;
+  text-align: center;
+  font-size: 64px;
+  font-family: Montserrat;
+  letter-spacing: 3px;
+  line-height: 1.25;
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: #61DAFB;
+  text-shadow: -3px 3px 6px rgba(0,0,0,0.15);
+}
+
+.fancy-h2 {
+  color: snow;
+  font-size: 48px;
+  font-family: Montserrat;
+  letter-spacing: 1px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: violet;
+  text-shadow: -2px 2px 4px rgba(0,0,0,0.15);
+}
+
+.fancy-h3 {
+  margin: 0;
+  padding: 0;
+  color: snow;
+  font-size: 48px;
+  font-family: Montserrat;
+  letter-spacing: 1px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: violet;
+  text-shadow: -2px 2px 4px rgba(0,0,0,0.15);
+}
+
+
+/* ============================
+      .slider-container
+============================= */
+
+
+.slider-container {
+	width: 75%;
+	margin: 0 auto 25px auto;
+	border: 20px solid white;
+	outline: 0.5px solid rgba(0,0,0,0.15);
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+
+/* ============================
+        .initialize
+============================= */
+/* This seems to work fine without resorting to !important. */
+
+
+.slider-container.initialize .image-container div span.active-slide {
+  transform: scale(1);
+  opacity: 1;
+  z-index:1000;
+}
+
+.slider-container.initialize * {
+  transition: all 0s linear;
+}
+
+.slider-container.initialize .image-title-container .image-title:first-of-type {
+	transition: all 0s linear;
+}
+
+
+/* ============================
+    .aspect-ratio-container
+============================= */
+
+
+.aspect-ratio-container {
+	position: relative;
+	width: 100%;
+	/* Note that the actual images have an aspect-ratio of 6x4 (WxH). */
+	padding: 33.33333333% 0; /* For a 3:2 aspect-ratio. */
+}
+
+
+/* ============================
+        .image-container
+============================= */
+
+
+.image-container {
+  display: flex;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+}
+
+.image-container div {
+	position: relative;
+  flex: 1; /* Or use width: 25%; */
+	height: 100%;
+	overflow: hidden;
+}
+
+.image-container div span {
+	position: absolute;
+	top: 0px;    /* Specific to the slider version. */
+	left: 0px;   /* Specific to the slider version. */
+	height: 100%;
+	width: 100%;
+	-webkit-transform: scale(1.5);
+	transform:         scale(1.5);   /* Specific to the slider version. */
+	opacity: 0;                      /* Specific to the slider version. */
+	z-index: 2;
+}
+
+.image-container div span:nth-child(1){
+	background-image: url(../images/image-1.jpg);
+	background-size: cover;
+}
+
+.image-container div span:nth-child(2){
+	background-image: url(../images/image-2.jpg);
+	background-size: cover;
+}
+
+.image-container div span:nth-child(3){
+	background-image: url(../images/image-3.jpg);
+	background-size: cover;
+}
+
+.image-container div span:nth-child(4){
+	background-image: url(../images/image-4.jpg);
+	background-size: cover;
+}
+
+.image-container div:nth-child(1) span { background-position:     0 0; }
+.image-container div:nth-child(2) span { background-position: -100% 0; }
+.image-container div:nth-child(3) span { background-position: -200% 0; }
+.image-container div:nth-child(4) span { background-position: -300% 0; }
+
+
+/* ============================
+          animation
+============================= */
+
+
+/* Note: There was a little bit of a glitch on the .indicator-container > div:after
+during the animations. This selector is responsible for creating the thing vertical
+panel line.
+
+Often various kinds of animation fuzz or distortion are resolved through a
+transform: translateZ(0); hack. That said the animation itself doesn't use transform here.
+It only uses the left property, so I was surprised that this fixed it.
+
+See note on unfuzzing 3D transformed text: https://3dtransforms.desandro.com/cube
+If you remove this, the text will be super distorted */
+/* translasteZ(0px) is to prevent distortion.
+Strangely, putting it ONlY here is sufficient to elimate distortion/fuzzing on the text.
+However, putting only on the scale_header_animation also works.
+That said, I have also put it in both animations.
+
+Update: the vertical panel lines still change color slightly at the end of the animation.
+Or at least the middle line. However, it only does below certain widths.
+I'm not sure what is causing this... */
+
+
+.image-container div span.scale-out {
+	-webkit-animation: scale-out 0.75s ease-in-out;
+	animation:         scale-out 0.75s ease-in-out;
+}
+
+@-webkit-keyframes scale-out {
+	0%   { -webkit-transform: scale(1);   opacity: 1; }
+	100% { -webkit-transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes scale-out {
+	0%   { transform: scale(1);   opacity: 1; }
+	100% { transform: scale(1.5); opacity: 0; }
+}
+
+
+/* ============================
+    .active-slide animation
+============================= */
+/* One could justifiably rename this and the animation to active-slice */
+
+
+.image-container div span.active-slide {
+  -webkit-animation: active-slide 0.75s ease-in-out forwards;
+	animation:         active-slide 0.75s ease-in-out forwards;
+}
+
+@-webkit-keyframes active-slide {
+  to { opacity: 1; z-index:1000; -webkit-transform: scale(1); }
+}
+
+@keyframes active-slide {
+  to { opacity: 1; z-index:1000; transform: scale(1); }
+}
+
+
+/* The original 'animation' was a transition.
+Note how the z-index animates at the very end.
+I have not done that in the above animatin, and it still seems to work fine. */
+
+/*
+.image-container div span.active-slide {
+	-webkit-transition: -webkit-transform 0.5s ease-in-out, opacity 0.5s ease-in-out, z-index 0s linear 0.6s;
+	transition: transform                 0.5s ease-in-out, opacity 0.5s ease-in-out, z-index 0s linear 0.6s;
+
+  -webkit-animation: none;
+	animation:         none;
+	opacity: 1;
+	-webkit-transform: scale(1);
+	transform:         scale(1);
+	z-index:1000;
+}
+*/
+
+
+/* ============================
+    .image-title-container
+============================= */
+
+
+.image-title-container { }
+
+.image-title-container h3 {
+  /* .image-title-container does not have position: relative.
+  So this is situating itself 'relative' to .aspect-ratio-container. */
+  position: absolute;
+  top: 65%;
+  left: 0;
+	width: 100%;
+	color: white;
+  text-align: center;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+
+/* ========= span ========== */
+
+
+.image-title-container h3 span {
+  display: block;
+	opacity: 0;
+}
+
+.image-title-container h3 span:nth-child(1){
+  position: relative; /* For the z-index. */
+  /* The original implementation emulated a blur by using color:transparent
+  in conjunction with a heavy text-shadow. */
+  -webkit-filter: blur(10px);
+  filter:         blur(10px);
+  -webkit-transition: -webkit-filter 1s ease-in-out, opacity 1s ease-in-out;
+	transition:         filter         1s ease-in-out, opacity 1s ease-in-out;
+  z-index: 1001; /* So the text will sit above the banner. */
+}
+
+.image-title-container h3 span:nth-child(2){
+  padding: 10px 0px;
+  font-size: 16px;
+	background-color: rgba(97,218,251,0.9);
+	-webkit-transition: opacity 1s ease-in-out;
+	transition:         opacity 1s ease-in-out;
+}
+
+
+/* ===== .active-title ===== */
+
+
+.image-title-container h3.active-title span:nth-child(1) {
+	opacity: 1;
+  -webkit-filter: blur(0px);
+  filter:         blur(0px);
+}
+
+.image-title-container h3.active-title span:nth-child(2) {
+	opacity: 1;
+}
+
+
+/* ============================
+          .indicator
+============================= */
+
+
+.indicator-container {
+	display: flex;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.indicator-container > div { /* The div is a flex item wrapper. */
+	position: relative; /* Because .indicator-container > div:after is position: absolute. */
+	flex: 1;
+}
+
+/* The vertical lines. */
+.indicator-container > div:after {
+	content: '';
+	position: absolute;
+  top: 0;
+	right: 0px;
+	height: 100%;
+	width: 0.5px;
+	background-color: rgba(255,255,255,0.5);
+	z-index: 1000; /* A bit overkill... */
+}
+
+/* Hide the last vertical line by giving it a width of 0. */
+.indicator-container > div:last-of-type:after { width: 0px; }
+
+.indicator {
+	flex: 1;
+	position: relative;
+  top: 90%;
+	left: 50%;
+	transform: translateX(-50%);
+	height: 30px;
+	width: 30px;
+  margin: 0;
+  padding: 0;
+	color: white;
+	font-size: 20px;
+  /* Seems to be okay with whatever computed line-height is. */
+	cursor: pointer;
+	background-color: #61DAFB;
+	outline: none;
+	border: none;
+	border-radius: 50%;
+	box-shadow: 0px 0px 0px 4px rgba(255,255,255,0.3); /* This creates the translucent outer ring. */
+	z-index: 1000; /* A bit overkill... */
+}
+
+.indicator.active-indicator {
+  color: #61DAFB;
+  background-color: white;
+  box-shadow: 0px 0px 0px 4px rgba(97,218,251,0.6);
+}
+
+
+/* =============================================================================
+                                Media Queries
+============================================================================= */
+
+
+@media only screen and (max-width: 800px){
+  .fancy-h1 { font-size: 48px; }
+}
+
+@media only screen and (max-width: 760px) {
+  .slider-container { width: 90%; }
+  .indicator { top: 89%; }
+}
+
+@media only screen and (max-width: 700px) {
+  .fancy-h3 { font-size: 32px; }
+
+  .image-title span:nth-child(2){
+  	padding: 5px;
+  	font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .fancy-h1 { font-size: 40px; }
+  .slider-container { width: 100%; }
+}
